@@ -52,7 +52,7 @@
                 # $HOME.
                 #
                 # https://nix-community.github.io/home-manager/index.html#sec-usage-configuration
-                # imports = [ ./home ];
+                imports = [ ./home ];
                 home.username = myUserName;
                 home.homeDirectory = userHome;
                 home.stateVersion = "23.11";
