@@ -8,13 +8,13 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
 
     flake-parts.url = "github:hercules-ci/flake-parts";
-    nixos-flake.url = "github:srid/nixos-flake";
+    nixos-unified.url = "github:srid/nixos-unified";
   };
 
   outputs = inputs@{ self, ... }:
     inputs.flake-parts.lib.mkFlake { inherit inputs; } {
       systems = [ "aarch64-darwin" ];
-      imports = [ inputs.nixos-flake.flakeModule ];
+      imports = [ inputs.nixos-unified.flakeModule ];
 
       flake =
         let
@@ -23,41 +23,42 @@
         in
         {
           # Configurations for macOS machines
-          # replace `Zhenhaos-MacBook-Pro-3` with your `hostname -s`; it is the same host name as in your nix-darwin configuration 
-          darwinConfigurations."Zhenhaos-MacBook-Pro-3" = self.nixos-flake.lib.mkMacosSystem {
+          # replace `MacBookPro` with your `hostname -s`; it is the same host name as in your nix-darwin configuration 
+          darwinConfigurations."MacBookPro" = self.nixos-unified.lib.mkMacosSystem 
+            { home-manager = true; }
+            {
 
-            nixpkgs.hostPlatform = "aarch64-darwin";
-            nixpkgs.config.allowUnfree = true;
-		
-            services.nix-daemon.enable = true;
-            
-            users.users.${myUserName}.home = myHome;
+              nixpkgs.hostPlatform = "aarch64-darwin";
+              nixpkgs.config.allowUnfree = true;
+      
+              services.nix-daemon.enable = true;
+              
+              users.users.${myUserName}.home = myHome;
 
-            imports = [
-              ({ pkgs, ... }: {
-                security.pam.enableSudoTouchIdAuth = true;
-                # Used for backwards compatibility, please read the changelog before changing.
-                # $ darwin-rebuild changelog
-                system.stateVersion = 4;
-              })
-              # Setup home-manager in nix-darwin config
-              self.darwinModules_.home-manager
-              {
-                home-manager.users.${myUserName} = {
-                  imports = [ self.homeModules.default ];
-                  home.stateVersion = "24.05";
-                  home.homeDirectory = myHome;
-                };
-              }
-            ];
-          };
+              imports = [
+                ({ pkgs, ... }: {
+                  security.pam.enableSudoTouchIdAuth = true;
+                  # Used for backwards compatibility, please read the changelog before changing.
+                  # $ darwin-rebuild changelog
+                  system.stateVersion = 4;
+                })
+                # Setup home-manager in nix-darwin config
+                {
+                  home-manager.users.${myUserName} = {
+                    imports = [ self.homeModules.default ];
+                    home.stateVersion = "25.05";
+                    home.homeDirectory = myHome;
+                  };
+                }
+              ];
+            };
 
           # home-manager configuration goes here.
           homeModules.default = { pkgs, ... }: {
             imports = [ ];
 	    
             home.packages = with pkgs; [
-              jdk17
+              jdk21
               nodejs
             ];
 
