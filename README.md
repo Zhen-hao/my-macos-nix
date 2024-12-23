@@ -29,3 +29,5 @@ Once the preparation steps are done, you can get NixOS experience (managing soft
 [Flake Templates](https://community.flake.parts/nixos-flake/templates)
 
 The source code of the template is [nixos-flake](https://github.com/srid/nixos-flake?tab=readme-ov-file)
+
+Also see [nixos-unified](https://github.com/srid/nixos-unified)
